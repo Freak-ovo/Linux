@@ -1,5 +1,5 @@
-#ifndef __BSK_KEYFILTER_H__
-#define __BSK_KEYFILTER_H__
+#ifndef __BSP_KEYFILTER_H__
+#define __BSP_KEYFILTER_H__
 
 
 #include "imx6ul.h"
@@ -14,6 +14,6 @@ void keyfilter_irq_handler_t(unsigned int giccIar, void *param);
 
 
 
-#endif /* __BSK_KEYFILTER_H__ */
+#endif /* __BSP_KEYFILTER_H__ */
 
 

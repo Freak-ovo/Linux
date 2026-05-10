@@ -8,6 +8,6 @@
 #include "MCIMX6Y2.h"
 
 void Delay_Short(volatile unsigned int n);
-void Delay(volatile unsigned int n);
+void Delay_ms(volatile unsigned int n);
 
 #endif

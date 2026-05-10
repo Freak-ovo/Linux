@@ -44,7 +44,7 @@ int Key_GetValue(void)
     //if ((release == 1) && (Key_Read() == 0))    /* 按键按下时 */
     if ((release == 1) && (gpio_pinread(GPIO1, 18) == 0))    /* 按键按下时 */
     {
-        Delay(10);
+        Delay_ms(10);
         release = 0;
         //if (Key_Read() == 0)    /* 如果延时10ms后，按键还是按下状态，表示按键按下状态 */
         if (gpio_pinread(GPIO1, 18) == 0)    /* 如果延时10ms后，按键还是按下状态，表示按键按下状态 */
@@ -55,7 +55,7 @@ int Key_GetValue(void)
     //else if ((release == 0) && (Key_Read() == 1))    /* 按键释放时 */
     else if((release == 0) && (gpio_pinread(GPIO1, 18) == 1))
     {
-        Delay(10);
+        Delay_ms(10);
         release = 1;
         //if (Key_Read() == 1)    /* 如果延时10ms后，按键还是释放状态，表示按键释放状态 */
         if (gpio_pinread(GPIO1, 18) == 1)    /* 如果延时10ms后，按键还是释放状态，表示按键释放状态 */

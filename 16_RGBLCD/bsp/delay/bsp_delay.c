@@ -13,7 +13,7 @@ void Delay_Short(volatile unsigned int n)
  * 在主频396MHz 下 
  * n: 延时的ms数
  */
-void Delay(volatile unsigned int n)
+void Delay_ms(volatile unsigned int n)
 {
     while(n--)
     {

@@ -13,8 +13,15 @@
 #include "bsp_int.h"       /* 引入自定义的板级中断驱动头文件 */
 #include "bsp_exit.h"
 #include "bsp_epit.h"
-#include "bsk_keyfilter.h"
+#include "bsp_keyfilter.h"
+#include "bsp_lcd.h"
 #include "stdio.h"
+
+
+
+
+
+
 
 /* 程序主入口，裸机程序的起点 */
 int main(void)
@@ -29,20 +36,28 @@ int main(void)
     Exit_Init();
     EPIT1_Init(0, 33000000);/* 500ms 周期的定时器 */
     KeyFilter_Init();
+    LCD_Init();
+
+    LCD_INFO_t TFT_LCD_DEV;
+    LCD_DrawPoint(0, 0, LCD_BLUE);  /* 绘制一个蓝色的点在(0,0) 左上方 */
+    LCD_DrawPoint(0,TFT_LCD_DEV.Width-1, LCD_GREEN);  /* 绘制一个绿色的点在(0,Width-1) 左上方 */
+    LCD_DrawPoint(TFT_LCD_DEV.Width-1, TFT_LCD_DEV.Height-1, LCD_YELLOW);  /* 绘制一个黄色的点在(Width-1,Height-1) 右下方 */
 
 
-    int a, b;
+
+    LCD_DrawPoint(100, 100, LCD_RED);
+    printf("x = %d, y = %d, color = 0x%08X\n", 100, 100, LCD_ReadPoint(100, 100));
+    unsigned int a, b;
+    a = LCD_ReadPoint(100, 100);
+    b = LCD_ReadPoint(100, 101);
+    printf("\n");
+    printf("a = 0x%08X, b = 0x%08X\n", a, b);
 
 
     while (1)
     {
-        printf("Hello, World!\n");
-        printf("请输入2个整数，使用空格隔开!\r\n");
-        scanf("%d %d", &a, &b);
-        printf("您输入的整数是: %d %d\r\n", a, b);
 
-        printf("您输入的整数的和是: %d+%d=%d\r\n", a, b, a+b);
-
+        
         
     }
 }

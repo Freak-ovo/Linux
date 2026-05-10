@@ -39,7 +39,7 @@ void Exit_Init(void)
 void gpio_io18_irq_handler_t(unsigned int giccIar, void *param)
 {
     static unsigned char state = 0;
-    Delay(10);/* 实际开发中禁止在中断服务函数中使用延时函数，否则会导致中断响应延迟 */
+    Delay_ms(10);/* 实际开发中禁止在中断服务函数中使用延时函数，否则会导致中断响应延迟 */
     if (gpio_get_interrupt_flag(GPIO1, 18))
     {
         state = !state;

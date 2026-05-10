@@ -1,7 +1,7 @@
 # 指定交叉编译器的前缀，使用 ?= 允许外部传入覆盖
 CROSS_COMPILE	?= arm-linux-gnueabihf-
 # 指定最终生成的目标文件名，默认为 print
-TARGET			?= DDR
+TARGET			?= LCD
 
 CC				:= $(CROSS_COMPILE)gcc  # 定义 C 编译器完整命令
 LD				:= $(CROSS_COMPILE)ld   # 定义链接器完整命令
@@ -24,6 +24,7 @@ INCLUDIRS		:= imx6ull \
 					bsp/epit \
 					bsp/keyfilter \
 					bsp/int	\
+					bsp/lcd \
 					bsp/uart 
 					
 
@@ -40,6 +41,7 @@ SRCDIRS			:= project \
 					bsp/epit \
 					bsp/keyfilter \
 					bsp/int	\
+					bsp/lcd \
 					bsp/uart 
 					
 
