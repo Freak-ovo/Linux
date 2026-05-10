@@ -1,0 +1,192 @@
+
+ledc.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+87800000 <_start>:
+87800000:	e10f0000 	mrs	r0, CPSR
+87800004:	e3c0001f 	bic	r0, r0, #31
+87800008:	e3800013 	orr	r0, r0, #19
+8780000c:	e129f000 	msr	CPSR_fc, r0
+87800010:	e51fd000 	ldr	sp, [pc, #-0]	@ 87800018 <_start+0x18>
+87800014:	ea000033 	b	878000e8 <__main_from_arm>
+87800018:	80200000 	eorhi	r0, r0, r0
+8780001c:	00001e41 	andeq	r1, r0, r1, asr #28
+87800020:	61656100 	cmnvs	r5, r0, lsl #2
+87800024:	01006962 	tsteq	r0, r2, ror #18
+87800028:	00000014 	andeq	r0, r0, r4, lsl r0
+8780002c:	412d3705 			@ <UNDEFINED> instruction: 0x412d3705
+87800030:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+87800034:	09010841 	stmdbeq	r1, {r0, r6, fp}
+87800038:	00040a02 	andeq	r0, r4, r2, lsl #20
+
+8780003c <CLK_Enable>:
+8780003c:	f44f 4380 	mov.w	r3, #16384	@ 0x4000
+87800040:	f2c0 230c 	movt	r3, #524	@ 0x20c
+87800044:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+87800048:	669a      	str	r2, [r3, #104]	@ 0x68
+8780004a:	66da      	str	r2, [r3, #108]	@ 0x6c
+8780004c:	671a      	str	r2, [r3, #112]	@ 0x70
+8780004e:	675a      	str	r2, [r3, #116]	@ 0x74
+87800050:	679a      	str	r2, [r3, #120]	@ 0x78
+87800052:	67da      	str	r2, [r3, #124]	@ 0x7c
+87800054:	f8c3 2080 	str.w	r2, [r3, #128]	@ 0x80
+87800058:	4770      	bx	lr
+8780005a:	bf00      	nop
+
+8780005c <LED_Init>:
+8780005c:	2200      	movs	r2, #0
+8780005e:	f2c0 220e 	movt	r2, #526	@ 0x20e
+87800062:	f44f 4340 	mov.w	r3, #49152	@ 0xc000
+87800066:	f2c0 2309 	movt	r3, #521	@ 0x209
+8780006a:	2105      	movs	r1, #5
+8780006c:	2008      	movs	r0, #8
+8780006e:	6691      	str	r1, [r2, #104]	@ 0x68
+87800070:	f241 0cb0 	movw	ip, #4272	@ 0x10b0
+87800074:	2100      	movs	r1, #0
+87800076:	f8c2 c0f4 	str.w	ip, [r2, #244]	@ 0xf4
+8780007a:	6058      	str	r0, [r3, #4]
+8780007c:	6019      	str	r1, [r3, #0]
+8780007e:	4770      	bx	lr
+
+87800080 <Delay_Short>:
+87800080:	b082      	sub	sp, #8
+87800082:	9001      	str	r0, [sp, #4]
+87800084:	9b01      	ldr	r3, [sp, #4]
+87800086:	1e5a      	subs	r2, r3, #1
+87800088:	9201      	str	r2, [sp, #4]
+8780008a:	2b00      	cmp	r3, #0
+8780008c:	d1fa      	bne.n	87800084 <Delay_Short+0x4>
+8780008e:	b002      	add	sp, #8
+87800090:	4770      	bx	lr
+87800092:	bf00      	nop
+
+87800094 <Delay>:
+87800094:	b082      	sub	sp, #8
+87800096:	9001      	str	r0, [sp, #4]
+87800098:	9b01      	ldr	r3, [sp, #4]
+8780009a:	1e5a      	subs	r2, r3, #1
+8780009c:	9201      	str	r2, [sp, #4]
+8780009e:	b153      	cbz	r3, 878000b6 <Delay+0x22>
+878000a0:	f240 73ff 	movw	r3, #2047	@ 0x7ff
+878000a4:	461a      	mov	r2, r3
+878000a6:	3b01      	subs	r3, #1
+878000a8:	2a00      	cmp	r2, #0
+878000aa:	d1fb      	bne.n	878000a4 <Delay+0x10>
+878000ac:	9b01      	ldr	r3, [sp, #4]
+878000ae:	1e5a      	subs	r2, r3, #1
+878000b0:	9201      	str	r2, [sp, #4]
+878000b2:	2b00      	cmp	r3, #0
+878000b4:	d1f4      	bne.n	878000a0 <Delay+0xc>
+878000b6:	b002      	add	sp, #8
+878000b8:	4770      	bx	lr
+878000ba:	bf00      	nop
+
+878000bc <LED_ON>:
+878000bc:	f44f 4340 	mov.w	r3, #49152	@ 0xc000
+878000c0:	f2c0 2309 	movt	r3, #521	@ 0x209
+878000c4:	681a      	ldr	r2, [r3, #0]
+878000c6:	f022 0208 	bic.w	r2, r2, #8
+878000ca:	601a      	str	r2, [r3, #0]
+878000cc:	4770      	bx	lr
+878000ce:	bf00      	nop
+
+878000d0 <LED_OFF>:
+878000d0:	f44f 4340 	mov.w	r3, #49152	@ 0xc000
+878000d4:	f2c0 2309 	movt	r3, #521	@ 0x209
+878000d8:	681a      	ldr	r2, [r3, #0]
+878000da:	f042 0208 	orr.w	r2, r2, #8
+878000de:	601a      	str	r2, [r3, #0]
+878000e0:	4770      	bx	lr
+878000e2:	bf00      	nop
+878000e4:	0000      	movs	r0, r0
+	...
+
+878000e8 <__main_from_arm>:
+878000e8:	e51ff004 	ldr	pc, [pc, #-4]	@ 878000ec <__main_from_arm+0x4>
+878000ec:	878000f1 			@ <UNDEFINED> instruction: 0x878000f1
+
+Disassembly of section .text.startup:
+
+878000f0 <main>:
+878000f0:	f44f 4380 	mov.w	r3, #16384	@ 0x4000
+878000f4:	f2c0 230c 	movt	r3, #524	@ 0x20c
+878000f8:	2100      	movs	r1, #0
+878000fa:	f2c0 210e 	movt	r1, #526	@ 0x20e
+878000fe:	f44f 4040 	mov.w	r0, #49152	@ 0xc000
+87800102:	f2c0 2009 	movt	r0, #521	@ 0x209
+87800106:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+8780010a:	f04f 0c05 	mov.w	ip, #5
+8780010e:	669a      	str	r2, [r3, #104]	@ 0x68
+87800110:	66da      	str	r2, [r3, #108]	@ 0x6c
+87800112:	671a      	str	r2, [r3, #112]	@ 0x70
+87800114:	675a      	str	r2, [r3, #116]	@ 0x74
+87800116:	679a      	str	r2, [r3, #120]	@ 0x78
+87800118:	67da      	str	r2, [r3, #124]	@ 0x7c
+8780011a:	f8c3 2080 	str.w	r2, [r3, #128]	@ 0x80
+8780011e:	2208      	movs	r2, #8
+87800120:	f8c1 c068 	str.w	ip, [r1, #104]	@ 0x68
+87800124:	2300      	movs	r3, #0
+87800126:	f241 0cb0 	movw	ip, #4272	@ 0x10b0
+8780012a:	f8c1 c0f4 	str.w	ip, [r1, #244]	@ 0xf4
+8780012e:	6042      	str	r2, [r0, #4]
+87800130:	6003      	str	r3, [r0, #0]
+87800132:	6803      	ldr	r3, [r0, #0]
+87800134:	f240 11f3 	movw	r1, #499	@ 0x1f3
+87800138:	f023 0308 	bic.w	r3, r3, #8
+8780013c:	6003      	str	r3, [r0, #0]
+8780013e:	f240 73ff 	movw	r3, #2047	@ 0x7ff
+87800142:	461a      	mov	r2, r3
+87800144:	3b01      	subs	r3, #1
+87800146:	2a00      	cmp	r2, #0
+87800148:	d1fb      	bne.n	87800142 <main+0x52>
+8780014a:	460b      	mov	r3, r1
+8780014c:	3901      	subs	r1, #1
+8780014e:	2b00      	cmp	r3, #0
+87800150:	d1f5      	bne.n	8780013e <main+0x4e>
+87800152:	6803      	ldr	r3, [r0, #0]
+87800154:	f240 11f3 	movw	r1, #499	@ 0x1f3
+87800158:	f043 0308 	orr.w	r3, r3, #8
+8780015c:	6003      	str	r3, [r0, #0]
+8780015e:	f240 73ff 	movw	r3, #2047	@ 0x7ff
+87800162:	461a      	mov	r2, r3
+87800164:	3b01      	subs	r3, #1
+87800166:	2a00      	cmp	r2, #0
+87800168:	d1fb      	bne.n	87800162 <main+0x72>
+8780016a:	460b      	mov	r3, r1
+8780016c:	3901      	subs	r1, #1
+8780016e:	2b00      	cmp	r3, #0
+87800170:	d1f5      	bne.n	8780015e <main+0x6e>
+87800172:	e7de      	b.n	87800132 <main+0x42>
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347 	bcc	10d0d24 <_start-0x8672f2dc>
+   4:	62552820 	subsvs	r2, r5, #32, 16	@ 0x200000
+   8:	75746e75 	ldrbvc	r6, [r4, #-3701]!	@ 0xfffff18b
+   c:	2e353120 	cdpcs	1, 3, cr3, cr5, cr0, {1}
+  10:	2d302e32 	ldccs	14, cr2, [r0, #-200]!	@ 0xffffff38
+  14:	75627534 	strbvc	r7, [r2, #-1332]!	@ 0xfffffacc
+  18:	3475746e 	ldrbtcc	r7, [r5], #-1134	@ 0xfffffb92
+  1c:	35312029 	ldrcc	r2, [r1, #-41]!	@ 0xffffffd7
+  20:	302e322e 	eorcc	r3, lr, lr, lsr #4
+	...
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002e41 	andeq	r2, r0, r1, asr #28
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000024 	andeq	r0, r0, r4, lsr #32
+  10:	412d3705 			@ <UNDEFINED> instruction: 0x412d3705
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	12040a02 	andne	r0, r4, #8192	@ 0x2000
+  20:	15011404 	strne	r1, [r1, #-1028]	@ 0xfffffbfc
+  24:	18031701 	stmdane	r3, {r0, r8, r9, sl, ip}
+  28:	1c021a01 			@ <UNDEFINED> instruction: 0x1c021a01
+  2c:	Address 0x2c is out of bounds.
+

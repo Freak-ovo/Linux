@@ -1,0 +1,6 @@
+echo "*.o" >> .gitignore
+echo "*.axf" >> .gitignore
+echo "*.lst" >> .gitignore
+echo "*.map" >> .gitignore
+echo "build/" >> .gitignore
+echo "images/" >> .gitignore
