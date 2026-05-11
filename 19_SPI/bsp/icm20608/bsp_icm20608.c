@@ -122,16 +122,16 @@ float ICM20608_gyro_Scaleget(void)
     switch (data)
     {
     case 0:
-        gyro_scale = 131f;
+        gyro_scale = 131;
         break;
     case 1:
-        gyro_scale = 65.5f;
+        gyro_scale = 65.5;
         break;
     case 2:
-        gyro_scale = 32.8f;
+        gyro_scale = 32.8;
         break;
     case 3:
-        gyro_scale = 16.4f;
+        gyro_scale = 16.4;
         break;
     default:
         break;

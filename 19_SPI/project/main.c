@@ -6,7 +6,6 @@
 #include "bsp_clk.h"       /* 引入自定义的板级时钟驱动头文件 */
 #include "bsp_delay.h"     /* 引入自定义的板级延时驱动头文件 */
 #include "bsp_uart.h"      /* 引入自定义的板级串口驱动头文件 */
-
 #include "bsp_led.h"       /* 引入自定义的板级LED驱动头文件 */
 #include "bsp_beep.h"
 #include "bsp_key.h"
@@ -23,12 +22,89 @@
 #include "bsp_icm20608.h"
 #include "bsp_spi.h"
 
+/* 
+ * @description : 指定的位置显示整数数据
+ * @param - x : X轴位置
+ * @param - y : Y轴位置
+ * @param - size: 字体大小
+ * @param - num : 要显示的数据
+ * @return : 无
+ */
+void integer_display(unsigned short x, unsigned short y, unsigned char size, signed int num)
+{
+    char buf[200];
+    
+    // 清除显示区域
+    LCD_Clear(LCD_WHITE);
+    
+    memset(buf, 0, sizeof(buf));
+    if(num < 0)
+        sprintf(buf, "-%d", -num);
+    else
+        sprintf(buf, "%d", num);
+    
+    LCD_ShowString(x, y, 50, size, size, buf);
+}
 
+/* 
+ * @description : 指定的位置显示小数数据,比如5123，显示为51.23
+ * @param - x : X轴位置
+ * @param - y : Y轴位置
+ * @param - size: 字体大小
+ * @param - num : 要显示的数据，实际小数扩大100倍
+ * @return : 无
+ */
+void decimals_display(unsigned short x, unsigned short y, unsigned char size, signed int num)
+{
+    signed int integ; /* 整数部分 */
+    signed int fract; /* 小数部分 */
+    signed int uncomptemp = num;
+    char buf[200];
+
+    if(num < 0)
+        uncomptemp = -uncomptemp;
+    
+    integ = uncomptemp / 100;
+    fract = uncomptemp % 100;
+
+    memset(buf, 0, sizeof(buf));
+    if(num < 0)
+        sprintf(buf, "-%d.%d", integ, fract);
+    else
+        sprintf(buf, "%d.%d", integ, fract);
+    
+    LCD_Clear(LCD_WHITE);
+    LCD_ShowString(x, y, 60, size, size, buf);
+}
+
+/* 
+ * @description : 使能I.MX6U的硬件NEON和FPU
+ * @param : 无
+ * @return : 无
+ */
+void imx6ul_hardfpu_enable(void)
+{
+    uint32_t cpacr;
+    uint32_t fpexc;
+
+    /* 使能NEON和FPU */
+    cpacr = __get_CPACR();
+    cpacr = (cpacr & ~(CPACR_ASEDIS_Msk | CPACR_D32DIS_Msk)) 
+            | (3UL << CPACR_cp10_Pos) | (3UL << CPACR_cp11_Pos);
+    __set_CPACR(cpacr);
+    
+    fpexc = __get_FPEXC();
+    fpexc |= 0x40000000UL;
+    __set_FPEXC(fpexc);
+}
 
 /* 程序主入口，裸机程序的起点 */
 int main(void)
 {
-    INT_Init();        /* 初始化中断控制器，设置中断向量表地址 */
+    // 启用硬件浮点运算单元
+    imx6ul_hardfpu_enable(); 
+    
+    INT_Init();        
     CLK_Enable(); 
     UART_Init();
     LED_Init();
@@ -36,7 +112,7 @@ int main(void)
     Key_Init();
     GIC_Init();
     Exit_Init();
-    EPIT1_Init(0, 33000000);/* 500ms 周期的定时器 */
+    EPIT1_Init(0, 33000000); /* 500ms 周期的定时器 */
     KeyFilter_Init();
     LCD_Init();
     RTC_Init();
@@ -46,23 +122,73 @@ int main(void)
     TFT_LCD_DEV.ForeColor = LCD_RED;
     TFT_LCD_DEV.BackColor = LCD_BLACK;
 
-    LCD_ShowString(10,40,260,32,32,(char *)"SPI:");
+    // 清屏
+    LCD_Clear(LCD_WHITE);
 
-    LCD_ShowString(40,40,260,32,32,(char *)"ICM20608:");
+    // 显示标题信息
+    LCD_ShowString(10, 10, TFT_LCD_DEV.Width-10, 24, 24, (char *)"IMX6U-ALPHA SPI TEST");
+    LCD_ShowString(10, 35, TFT_LCD_DEV.Width-10, 16, 16, (char *)"ICM20608 SENSOR DATA");
+    
+    // 检查ICM20608是否在线
+    unsigned char regval = ICM20608_ReadByte(ICM20_WHO_AM_I);
+    if (regval != 0xAB) // ICM20608的设备ID通常是0xAB
+    {
+        LCD_ShowString(10, 60, TFT_LCD_DEV.Width-10, 16, 16, (char *)"ICM20608 Check Failed!");
+        while(1)
+        {
+            LED_Switch(LED0, !gpio_pinread(GPIO1, 3)); // LED闪烁报警
+            Delay_ms(200);
+        }
+    }
+    else
+    {
+        LCD_ShowString(10, 60, TFT_LCD_DEV.Width-10, 16, 16, (char *)"ICM20608 Ready");
+    }
+
+    // 显示数据标签
+    LCD_ShowString(10, 90, 200, 16, 16, (char *)"Accel X:");
+    LCD_ShowString(10, 110, 200, 16, 16, (char *)"Accel Y:");
+    LCD_ShowString(10, 130, 200, 16, 16, (char *)"Accel Z:");
+    LCD_ShowString(10, 150, 200, 16, 16, (char *)"Gyro X:");
+    LCD_ShowString(10, 170, 200, 16, 16, (char *)"Gyro Y:");
+    LCD_ShowString(10, 190, 200, 16, 16, (char *)"Gyro Z:");
+    LCD_ShowString(10, 210, 200, 16, 16, (char *)"Temp :");
+
+    TFT_LCD_DEV.ForeColor = LCD_BLUE;
 
     bool status = false;
     while (1)
     {
-        unsigned char regval = ICM20608_ReadByte(ICM20_WHO_AM_I);
-        printf("ICM20608 ID = 0x%02X\n", regval);
-        LCD_ShowString(40,40,260,32,32,(char *)"ICM20608:");
+        // 获取ICM20608数据
         ICM20608_Get_data();
-        printf("ICM20608 gyro_x_adc = %d, gyro_y_adc = %d, gyro_z_adc = %d, accel_x_adc = %d, accel_y_adc = %d, accel_z_adc = %d, temp_adc = %d\n", ICM20608_dev.gyro_x_adc, ICM20608_dev.gyro_y_adc, ICM20608_dev.gyro_z_adc, ICM20608_dev.accel_x_adc, ICM20608_dev.accel_y_adc, ICM20608_dev.accel_z_adc, ICM20608_dev.temp_adc);
 
+        // 在LCD上显示原始ADC值 (左侧)
+        integer_display(100, 90, 16, ICM20608_dev.accel_x_adc);
+        integer_display(100, 110, 16, ICM20608_dev.accel_y_adc);
+        integer_display(100, 130, 16, ICM20608_dev.accel_z_adc);
+        integer_display(100, 150, 16, ICM20608_dev.gyro_x_adc);
+        integer_display(100, 170, 16, ICM20608_dev.gyro_y_adc);
+        integer_display(100, 190, 16, ICM20608_dev.gyro_z_adc);
+        integer_display(100, 210, 16, ICM20608_dev.temp_adc);
 
+        // 在LCD上显示计算后的实际值 (右侧，小数形式)
+        // 假设你的驱动已经将实际值放大了100倍存入 *_act 变量
+        decimals_display(200, 90, 16, ICM20608_dev.accel_x_act);
+        decimals_display(200, 110, 16, ICM20608_dev.accel_y_act);
+        decimals_display(200, 130, 16, ICM20608_dev.accel_z_act);
+        decimals_display(200, 150, 16, ICM20608_dev.gyro_x_act);
+        decimals_display(200, 170, 16, ICM20608_dev.gyro_y_act);
+        decimals_display(200, 190, 16, ICM20608_dev.gyro_z_act);
+        decimals_display(200, 210, 16, ICM20608_dev.temp_act);
+
+        // 打印串口信息
+        printf("ICM20608: Accel=(%d, %d, %d), Gyro=(%d, %d, %d), Temp=%d\n", 
+               ICM20608_dev.accel_x_adc, ICM20608_dev.accel_y_adc, ICM20608_dev.accel_z_adc,
+               ICM20608_dev.gyro_x_adc, ICM20608_dev.gyro_y_adc, ICM20608_dev.gyro_z_adc,
+               ICM20608_dev.temp_adc);
 
         status = !status;
         LED_Switch(LED0, status);
-        Delay_ms(500);
+        Delay_ms(120); // 与参考代码保持一致的刷新率
     }
 }

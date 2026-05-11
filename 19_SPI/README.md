@@ -7,7 +7,7 @@
 > 2. SCK，Serial Clock，串行时钟，和I2C 的SCL 一样，为SPI 通信提供时钟。
 > 3. MOSI/SDO，Master Out Slave In/Serial Data Output，简称主出从入信号线，这根数据线只能用于主机向从机发送数据，也就是主机输出，从机输入。
 > 4. MISO/SDI，Master In Slave Out/Serial Data Input，简称主入从出信号线，这根数据线只能用户从机向主机发送数据，也就是主机输入，从机输出。
-> ![alt text](image.png)
+> ![alt text](images/image.pngimage.png)
 ### APLHA开发板通过ECSPI3接口极了一个6周传感器：
 > ECSPI3_SCK: UART2_RXD
 > ECSPI3_MOSI: UART2_CTS
