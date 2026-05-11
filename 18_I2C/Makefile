@@ -1,7 +1,7 @@
 # 指定交叉编译器的前缀，使用 ?= 允许外部传入覆盖
 CROSS_COMPILE	?= arm-linux-gnueabihf-
 # 指定最终生成的目标文件名，默认为 print
-TARGET			?= RTC
+TARGET			?= AP3216C
 
 CC				:= $(CROSS_COMPILE)gcc  # 定义 C 编译器完整命令
 LD				:= $(CROSS_COMPILE)ld   # 定义链接器完整命令
@@ -26,7 +26,9 @@ INCLUDIRS		:= imx6ull \
 					bsp/int	\
 					bsp/lcd \
 					bsp/uart \
-					bsp/rtc
+					bsp/rtc \
+					bsp/i2c \
+					bsp/ap3216c
 					
 
 # 源文件（.c 和 .S）所在的目录集合
@@ -44,7 +46,9 @@ SRCDIRS			:= project \
 					bsp/int	\
 					bsp/lcd \
 					bsp/uart \
-					bsp/rtc
+					bsp/rtc \
+					bsp/i2c \
+					bsp/ap3216c
 					
 
 # 将头文件目录加上 -I 前缀，编译时告诉编译器去哪里找头文件

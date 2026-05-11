@@ -18,7 +18,8 @@
 #include "bsp_lcdapi.h"
 #include "stdio.h"
 #include "bsp_rtc.h"
-
+#include "bsp_ap3216c.h"
+#include "bsp_i2c.h"
 
 
 
@@ -38,24 +39,23 @@ int main(void)
     KeyFilter_Init();
     LCD_Init();
     RTC_Init();
+    AP3216C_Init();
 
     TFT_LCD_DEV.ForeColor = LCD_RED;
     TFT_LCD_DEV.BackColor = LCD_BLACK;
 
 
-    LCD_ShowString(10,40,260,32,32,(char *)"RTC Time:");
-    LCD_ShowString(10,80,260,32,32,(char *)"2026-05-19 10:50:00");
-    LCD_ShowString(10,40,260,32,32,(char *)"RTC Time:");
+    LCD_ShowString(10,40,260,32,32,(char *)"I2C:");
 
+    bool status = false;
     while (1)
     {
-        rtc_datetime_t rtcdata;
-        RTC_GetTime(&rtcdata);
-        printf("year = %d, month = %d, day = %d, hour = %d, minute = %d, second = %d\n", rtcdata.year, rtcdata.month, rtcdata.day, rtcdata.hour, rtcdata.minute, rtcdata.second);
-        Delay_ms(1000);
-
-
-
+        unsigned short IR, PS, ALS;
+        AP3216C_ReadData(&IR, &PS, &ALS);
+        printf("IR: %d, PS: %d, ALS: %d\n", IR, PS, ALS);
         
+        status = !status;
+        LED_Switch(LED0, status);
+        Delay_ms(500);
     }
 }

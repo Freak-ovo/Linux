@@ -17,5 +17,4 @@
 ### 2. 解决方法
 > 1. LPSRTCMR 作为 SRTC 的高 15位，但是LPSRTCLR寄存器bit[31:15] 作为 SRTC的低17位，相当于SRTC的计数器是个32位的。不是47位。
 ```c
-seconds = ((uint64_t)(uint64_t)(SNVS->LPSRTCMR << 17) |
-          SNVS->LPSRTCLR >> 15);    /* 从 LPSRTCMR 和 LPSRTCLR 寄存器读取时间值 */
+seconds = ((uint64_t)(uint64_t)(SNVS->LPSRTCMR << 17) | (SNVS->LPSRTCLR >> 15));    /* 从 LPSRTCMR 和 LPSRTCLR 寄存器读取时间值 */
